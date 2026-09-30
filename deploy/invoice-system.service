@@ -1,0 +1,25 @@
+[Unit]
+Description=Invoice review and PaddleOCR
+After=network.target
+
+[Service]
+Type=simple
+User=learned
+WorkingDirectory=/home/learned/invoice-system
+Environment=PYTHONUNBUFFERED=1
+Environment=CERT_DEMO_DATA=/home/learned/invoice-system/data/certificates
+Environment=INVOICE_DEMO_DATA=/home/learned/invoice-system/data/invoices
+Environment=CERT_OCR_MODEL_ROOT=/home/learned/invoice-system/models
+Environment=CERT_OCR_DEVICE=cpu
+Environment=CERT_OCR_CPU_THREADS=4
+Environment=APP_ALLOWED_HOSTS=127.0.0.1,localhost,192.168.3.117
+ExecStart=/home/learned/invoice-system/.venv/bin/python cert_demo/app.py --port 8765
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=120
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

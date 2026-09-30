@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>证书提取与审核 · 证书台账</title><link rel="stylesheet" href="/static/style.css"></head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="/"><span class="brand-mark">证</span><span>证书台账<small>CERTIFICATE DESK</small></span></a>
+    <div class="nav-caption">工作空间</div>
+    <button class="nav-item active" id="workbenchNav"><span>▦</span>提取与审核<span class="nav-dot"></span></button>
+    <button class="nav-item" id="rulesNav"><span>☷</span>字段规则</button>
+    <button class="nav-item" id="peopleNav"><span>♙</span>人员档案</button>
+    <button class="nav-item" id="alertsNav"><span>◷</span>预警任务</button>
+    <button class="nav-item" id="trashNav"><span>♧</span>回收站</button>
+    <button class="nav-item" id="backupNav"><span>▣</span>数据备份</button>
+    <div class="sidebar-note"><span class="tiny-status"></span> 本地测试空间<p>图片与审核记录保存在本机。</p><button class="text-button" id="helpButton">使用说明 ↗</button></div>
+    <div class="sidebar-bottom"><span class="avatar">安</span><div>安全员工作台<small>本地演示版</small></div></div>
+  </aside>
+  <main>
+    <header class="topbar"><span>证书管理 <span class="slash">/</span> <b id="currentPageLabel">提取与审核</b></span><div class="topbar-right"><span id="engineBadge" class="engine-badge">○ 等待连接</span><button id="startModel" class="button small">启动 OCR</button><button id="stopModel" class="button small" disabled>关闭 OCR</button><span id="today"></span></div></header>
+    <div class="content" id="workbenchPage">
+      <div class="heading-row"><div><div class="eyebrow">DOCUMENT REVIEW</div><h1>证书提取与审核</h1><p class="subtitle">按证书类型提取字段，让缺失和待核对的信息一目了然。</p></div><button class="button" id="rulesButton"><span>☷</span> 配置必填字段</button></div>
+      <section class="upload-zone" id="dropZone" aria-label="上传证书区域">
+        <div class="upload-symbol"><svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M16 21V5m-6 6 6-6 6 6M6 20v7h20v-7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="upload-copy"><h2>将证书图片拖到这里</h2><p>支持 JPG、PNG、WEBP · 单张不超过 15 MB · 可批量上传</p></div>
+        <div class="upload-actions"><button id="sampleButton" class="button">导入 9 张样例</button><button id="uploadButton" class="button primary">＋ 上传证书</button><input id="fileInput" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden></div>
+      </section>
+      <div id="queueBar" class="queue-bar" hidden><span class="spinner"></span><span id="queueText"></span><span class="queue-hint">识别完成后自动更新</span></div>
+      <section class="summary" aria-label="审核概览">
+        <div><span class="stat-label">证书总数</span><strong id="totalStat">0</strong><small>份图片</small></div>
+        <div><span class="stat-label"><i class="dot red"></i>待补录</span><strong id="missingStat">0</strong><small>必填字段缺失</small></div>
+        <div><span class="stat-label"><i class="dot amber"></i>待核对 / 审核</span><strong id="reviewStat">0</strong><small>需要人工确认</small></div>
+        <div><span class="stat-label"><i class="dot teal"></i>字段已核对</span><strong id="approvedStat">0</strong><small>字段已核对</small></div>
+      </section>
+      <section class="results-panel">
+        <div class="results-top"><h2>提取结果 <span id="resultCount" class="count-pill">0</span></h2><div class="export-actions"><button class="button subtle small" id="exportCsv">导出 CSV</button><button class="button small" id="exportXlsx">↓ 导出 Excel</button></div></div>
+        <div class="table-toolbar"><div class="tabs" id="filterTabs"><button data-filter="all" class="selected">全部</button><button data-filter="missing">待补录</button><button data-filter="review">待核对 / 审核</button><button data-filter="approved">字段已核对</button></div><div class="search-filters"><select id="riskFilter" aria-label="筛选证书风险"><option value="all">全部风险</option><option value="expired">有效期已过</option><option value="expiring">即将到期／复审</option><option value="review">复审待处理</option></select><select id="typeFilter" aria-label="筛选证书类型"><option value="all">全部证书类型</option><option value="electrical">电工作业证</option><option value="hcip">HCIP 认证证书</option><option value="unknown">待确认类型</option></select><div class="search-wrap"><span>⌕</span><input id="search" placeholder="搜索姓名、编号或文件名" aria-label="搜索证书"></div></div></div>
+        <div class="batch-toolbar"><label>展示方式 <select id="viewMode"><option value="records">按证书列表</option><option value="people">按人员分组</option></select></label><label>排序 <select id="sortOrder"><option value="created">最近上传</option><option value="expiry">到期日期由近到远</option><option value="name">按姓名</option></select></label><label>证书版本 <select id="lifecycleFilter"><option value="all">全部含历史</option><option value="current">当前证书</option><option value="historical">历史证书</option></select></label><button id="clearPersonFilter" class="button small" hidden>取消人员筛选</button><button id="exportSelected" class="button small" disabled>导出所选 Excel</button><span id="selectionCount">已选 0 条</span><button id="clearSelection" class="button small" disabled>取消勾选</button><button id="batchDelete" class="button small danger" disabled>批量删除</button><small id="groupHint">全选仅作用于当前筛选结果，切换筛选会取消隐藏条目的勾选。</small></div><div class="table-scroll"><table class="result-table"><thead><tr><th class="selection-col"><input id="selectAll" type="checkbox" aria-label="全选当前筛选结果"></th><th class="index-col">序号</th><th>人员 / 证书</th><th>证书编号</th><th>作业项目 / 认证方向</th><th>开始日期（初领）</th><th>有效期结束</th><th>复审信息</th><th>证书风险</th><th>字段审核状态</th><th>操作</th></tr></thead><tbody id="recordBody"></tbody></table></div>
+        <div id="emptyState" class="empty-state"><div class="empty-icon">▤</div><h3>从第一张证书开始</h3><p>上传真实证书，或导入已准备好的 9 张样例。<br>系统会调用本地 OCR，并检查每个必填字段。</p><button class="button primary" id="emptySamples">导入样例并识别</button></div>
+        <div class="table-foot"><span id="visibleCount">共 0 条记录</span><span>字段审核与证书有效性分别判断</span></div>
+      </section>
+      <div class="legend"><span><i class="dot red"></i>未识别：必填字段缺失</span><span><i class="dot amber"></i>待核对：格式、含义或置信度待确认</span><span><i class="dot gray"></i>不适用：该类型无需此字段</span></div>
+    </div>
+    <section id="managementPage" class="content management-page" hidden aria-labelledby="managementTitle">
+      <div class="heading-row"><div><div class="eyebrow">PERSONNEL &amp; ALERTS</div><h1 id="managementTitle">人员档案</h1><p class="subtitle">管理人员、证书预警与数据，在左侧切换工作页面。</p></div></div>
+      <div class="management-surface"><div id="managementContent"></div></div>
+    </section>
+  </main>
+</div>
+<dialog id="reviewDialog" class="review-dialog">
+  <header class="dialog-header"><div><span class="eyebrow">CERTIFICATE REVIEW</span><h2 id="reviewTitle">核对证书</h2><p id="reviewFilename"></p></div><button class="icon-button" id="closeReview" aria-label="关闭审核">×</button></header>
+  <div class="review-layout"><section class="preview-pane"><div class="preview-toolbar"><b>原图对照</b><div><button class="button small" id="previewMode">查看原始方向</button><button class="button small" id="retryOcr">重新识别</button></div></div><div id="regionPanel" class="region-panel" hidden><div class="region-title"><b id="regionTarget"></b><button class="button small" id="cancelRegion">取消框选</button></div><p>拖动框住一行文字；有效期限可框整行，起止日期一起提取。</p><div class="region-controls"><select id="regionMode" aria-label="区域识别模式"><option value="line">单行文字（推荐）</option><option value="block">多行区域</option></select><button class="button primary small" id="runRegion" disabled>识别选区</button></div><div id="regionMessage" role="status"></div><div id="regionCandidates"></div></div><div class="image-viewport"><div class="image-stage" id="imageStage"><img id="reviewImage" alt="证书原图" draggable="false"><div id="regionBox" class="region-box" hidden></div><div id="fieldHighlight" class="field-highlight" hidden></div></div></div><p class="preview-tip">点击字段旁“框选重识别”，在图上拖动选区。点击已有字段可定位原文。初领日期作为业务开始日期。</p><details class="ocr-raw"><summary>查看 OCR 原始文字</summary><pre id="rawText"></pre></details><details class="audit-details"><summary>查看操作记录</summary><div id="auditList"></div></details></section>
+    <section class="fields-pane"><div class="record-meta"><label>证书类型<select id="recordType"><option value="electrical">电工作业证</option><option value="hcip">HCIP 认证证书</option><option value="unknown">待确认类型</option></select></label><span id="ocrTiming"></span></div><div id="reviewNotice" class="review-notice"></div><div id="riskNotice" class="review-notice"></div><button id="nextIssue" class="button small">下一个待核对字段</button><div id="fieldInputs"></div><section id="reviewDetailsPanel" class="reviewer-area"><h3>复审管理</h3><p>原始复审信息保留在上方。含义不明的日期请核对后再分类。</p><label>上次复审日期<input id="lastReviewDate" type="date"></label><label>下次应复审日期<input id="nextReviewDate" type="date"></label><label>复审证明状态<select id="reviewProof"><option value="unknown">待核实</option><option value="pending">待补充</option><option value="checked">人工已核对</option></select></label><label>证明依据<textarea id="reviewProofNote" maxlength="500" placeholder="记录核对的证明名称、编号或依据；不是官方核验结果"></textarea></label></section><div class="reviewer-area"><label>审核人<input id="reviewer" placeholder="确认审核时必填" maxlength="80"></label><label>审核备注<textarea id="reviewNote" placeholder="记录需要跟进的事项" maxlength="1000" rows="2"></textarea></label></div></section></div>
+  <footer class="dialog-footer"><span id="saveMessage">保存修正后重新检查必填字段</span><div><button class="button" id="saveRecord">保存修正</button><button class="button primary" id="approveRecord">确认字段审核</button><button class="button primary" id="approveNext">审核并下一张</button></div></footer>
+</dialog>
+<dialog id="rulesDialog" class="rules-dialog"><header class="dialog-header"><div><span class="eyebrow">FIELD REQUIREMENTS</span><h2>配置必填字段</h2><p>同类证书共用一套规则，修改后会重新检查现有记录。</p></div><button class="icon-button" id="closeRules" aria-label="关闭规则">×</button></header><div class="rule-tabs" id="ruleTabs"></div><div id="ruleFields" class="rule-fields"></div><div class="rule-note">“不适用”的字段由证书类型决定。必填字段缺失时，将标记为待补录；改变规则后，相关证书需要重新审核。</div><footer class="dialog-footer"><span id="rulesVersion"></span><button class="button primary" id="saveRules">保存字段规则</button></footer></dialog>
+<dialog id="helpDialog" class="help-dialog"><header class="dialog-header"><h2>如何测试这个 Demo</h2><button class="icon-button" id="closeHelp" aria-label="关闭说明">×</button></header><ol><li>导入样例或上传图片，等待本地 OCR 完成识别。</li><li>在“字段规则”中设置每种证书必须填写的字段。</li><li>点击“核对”，对照原图补录缺失信息。原始识别值保留在字段下方。</li><li>对仅有年月、含义不明或低置信度的字段，核对后勾选“已核对”。</li><li>填写审核人，确认字段审核，再导出 Excel 或 CSV。</li></ol><p>本 Demo 只做图片识别、字段整理和审核。期限提示依据日期计算；“已审核”表示字段已确认，不是证书真实性或上岗资格的认证结论。</p></dialog>
+<dialog id="batchConfirm" class="rules-dialog"><header class="dialog-header"><h2>确认批量删除</h2></header><pre id="batchConfirmText" style="white-space:pre-wrap;padding:20px;font-family:inherit"></pre><footer class="dialog-footer"><button id="cancelBatch" class="button">取消</button><button id="confirmBatch" class="button danger">确认删除所选证书</button></footer></dialog><div id="toast" class="toast" role="status" hidden></div>
+
+<dialog id="linkDialog" class="rules-dialog"><header class="dialog-header"><h2 id="linkTitle">归属与换证</h2><button id="closeLinks" class="icon-button" aria-label="关闭关联">×</button></header><div id="linkContent"></div></dialog>
+<script src="/static/app.js"></script><script src="/static/region.js"></script><script src="/static/operations.js"></script>
+</body></html>

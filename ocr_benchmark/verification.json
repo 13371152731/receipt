@@ -1,0 +1,42 @@
+{
+  "gpu_full": {
+    "count": 27,
+    "mean_s": 0.45077027778003226,
+    "expiry_text_matches": [
+      "T05",
+      "T06",
+      "T07",
+      "T08",
+      "T09"
+    ],
+    "expiry_text_match_count": 5
+  },
+  "gpu_standard": {
+    "count": 27,
+    "mean_s": 0.3179939703722657,
+    "expiry_text_matches": [
+      "T02",
+      "T03",
+      "T05",
+      "T06",
+      "T07",
+      "T08",
+      "T09"
+    ],
+    "expiry_text_match_count": 7
+  },
+  "gpu_960": {
+    "count": 27,
+    "mean_s": 0.5090499333239643,
+    "expiry_text_matches": [
+      "T02",
+      "T03",
+      "T05",
+      "T06",
+      "T07",
+      "T08",
+      "T09"
+    ],
+    "expiry_text_match_count": 7
+  }
+}

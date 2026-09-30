@@ -1,0 +1,6 @@
+-r ../cert_demo/requirements.txt
+paddlepaddle==3.2.2
+paddleocr==3.3.2
+paddlex==3.3.12
+PyMuPDF>=1.24,<2
+Pillow>=10,<12

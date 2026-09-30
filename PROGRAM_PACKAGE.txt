@@ -1,0 +1,7 @@
+Invoice review program source distribution
+
+Included: application code, browser assets, deployment templates, tests and documentation.
+Excluded: OCR model weights, SQLite databases, uploaded images/PDFs, caches and generated outputs.
+
+Install the versions in cert_demo/requirements.txt and deploy/requirements-cpu.txt.
+Set CERT_OCR_MODEL_ROOT to a separately provisioned model directory before starting OCR.

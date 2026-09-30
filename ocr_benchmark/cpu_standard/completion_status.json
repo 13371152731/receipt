@@ -1,0 +1,7 @@
+{
+  "status": "stopped_incomplete",
+  "completed_first_image_seconds": 19.751333899970632,
+  "completed_T01_warmup_seconds": 18.56117910001194,
+  "aggregate_metrics_available": false,
+  "reason": "Only one sample completed; later image did not return promptly. No nine-image CPU results are claimed."
+}
